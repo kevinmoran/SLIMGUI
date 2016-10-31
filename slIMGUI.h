@@ -4,6 +4,7 @@
 #include "DynArray.h"
 
 static int slIMGUI_hot_item; //ID of the item we've clicked
+static int slIMGUI_hovered_item; //ID of the item we're hovered over
 static DynArray slIMGUI_verts;
 static GLuint slIMGUI_vao, slIMGUI_vbo;
 
@@ -14,6 +15,7 @@ void slIMGUI_draw();
 
 bool slIMGUI_init(){
     slIMGUI_hot_item = -1;
+    slIMGUI_hovered_item = -1;
     glGenBuffers(1, &slIMGUI_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, slIMGUI_vbo);
 	glBufferData(GL_ARRAY_BUFFER, 64*sizeof(float), NULL, GL_STATIC_DRAW); //TODO
@@ -47,9 +49,11 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h){
             return mouse_on;
         }
     }
-    else if(slIMGUI_hot_item==-1 && mouse_on && mouse_clicked){
+    else if(slIMGUI_hot_item==-1 && slIMGUI_hovered_item==id && mouse_on && mouse_clicked){
         slIMGUI_hot_item = id;
     }
+    if(mouse_on && !mouse_clicked) slIMGUI_hovered_item = id;
+    if(slIMGUI_hovered_item==id && !mouse_on) slIMGUI_hovered_item = -1;
     return false;
 }
 
