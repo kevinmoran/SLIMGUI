@@ -77,5 +77,5 @@ void slIMGUI_draw(){
     glBufferSubData(GL_ARRAY_BUFFER, 0, slIMGUI_verts.size*sizeof(float), slIMGUI_verts.data);
     glBindVertexArray(slIMGUI_vao);
     glDrawArrays(GL_TRIANGLES, 0, slIMGUI_verts.size);
-    slIMGUI_verts.empty();
+    slIMGUI_verts.clear();
 }
