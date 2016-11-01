@@ -10,6 +10,11 @@ static int slIMGUI_hovered_item; //ID of the item we're hovered over
 static GLuint slIMGUI_vao;
 static Shader slIMGUI_shader;
 
+const vec4 button_colour_on = vec4(0, 0.8f, 0, 1);
+const vec4 button_colour_off = vec4(0.8f, 0, 0, 1);
+const vec4 hover_modifier = vec4(0.2f, 0.2f, 0.2f, 0);
+const vec4 click_modifier = vec4(-0.2f, -0.2f, -0.2f, 0);
+
 bool slIMGUI_init();
 bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state=false);
 void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour);
@@ -48,7 +53,7 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool b
     vec4 colour = button_state ? vec4(0, 0.8f, 0, 1) : vec4(0.8f, 0, 0, 1); 
 
     if(is_active){
-        colour = colour - vec4(0.3f, 0.3f, 0.3f, 0);
+        colour = colour + click_modifier;
         if(!mouse_clicked){
             slIMGUI_active_item = -1;
             result = mouse_on^button_state;
@@ -58,7 +63,7 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool b
         slIMGUI_active_item = id;
     }
     if(mouse_on && !mouse_clicked){
-        colour = colour + vec4(0.3f, 0.3f, 0.3f, 0);
+        colour = colour + hover_modifier;
         slIMGUI_hovered_item = id;
     }
     if(slIMGUI_hovered_item==id && !mouse_on) slIMGUI_hovered_item = -1;
