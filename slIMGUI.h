@@ -30,12 +30,18 @@ bool slIMGUI_init(){
 bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state){
     int id = murmur3_32(text, strlen(text), 42);
 
+    //Map pos and size to screenspace coordinates
+    x = 2*x*gl_aspect_ratio - gl_aspect_ratio; //from [0->1] to [(-aspect_ratio)->aspect_ratio]
+    y = 1 - 2*y; //from [1->0] to [-1->1]
+    w = 2*w;
+    h = 2*h;
+
     double mouse_x, mouse_y;
     glfwGetCursorPos(window, &mouse_x, &mouse_y); //0->width, 0->height (down)
     mouse_x = 2*gl_aspect_ratio*mouse_x/gl_width - gl_aspect_ratio; //(-aspect_ratio)->aspect_ratio
     mouse_y = 1 - (2*mouse_y)/gl_height; //(-1)->1 (up)
 
-    bool mouse_on = (mouse_x>x && mouse_y>y && mouse_x<(x+w) && mouse_y<(y+h));
+    bool mouse_on = (mouse_x>x && mouse_y<y && mouse_x<(x+w) && mouse_y>(y-h));
     bool is_active = (id==slIMGUI_active_item);
     bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     bool result = button_state;
@@ -64,7 +70,9 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool b
 }
 
 void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour){
-    mat4 M = translate(scale(identity_mat4(), vec3(w,h,1)), vec3(x,y,0));
+    mat4 M = scale(identity_mat4(), vec3(w,h,1));
+    M = translate(M, vec3(0,-h,0));
+    M = translate(M, vec3(x,y,0));
     glUseProgram(slIMGUI_shader.id);
 	GLuint colour_loc = glGetUniformLocation(slIMGUI_shader.id, "colour");
 	glUniform4fv(colour_loc, 1, colour.v);
@@ -79,12 +87,12 @@ void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour){
 
 GLuint slIMGUI_load_geometry(){
     GLfloat points[] = {
-		0.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 0.0f,
-		1.0f, 1.0f
+		0, 1,
+		0, 0,
+		1, 0,
+		0, 1,
+		1, 0,
+		1, 1
 	};
 
 	GLuint vao;
