@@ -268,6 +268,7 @@ struct vec3 {
 };
 
 struct vec4 {
+	float v[4];
 	vec4 () {}
 	vec4 (float x, float y, float z, float w) {
 		v[0] = x;
@@ -287,7 +288,22 @@ struct vec4 {
 		v[2] = vv.v[2];
 		v[3] = w;
 	}
-	float v[4];
+	vec4 operator+ (vec4 rhs) {
+		vec4 vc;
+		vc.v[0] = v[0] + rhs.v[0];
+		vc.v[1] = v[1] + rhs.v[1];
+		vc.v[2] = v[2] + rhs.v[2];
+		vc.v[3] = v[3] + rhs.v[3];
+		return vc;
+	}
+	vec4 operator- (vec4 rhs) {
+		vec4 vc;
+		vc.v[0] = v[0] - rhs.v[0];
+		vc.v[1] = v[1] - rhs.v[1];
+		vc.v[2] = v[2] - rhs.v[2];
+		vc.v[3] = v[3] - rhs.v[3];
+		return vc;
+	}
 };
 
 struct mat3 {

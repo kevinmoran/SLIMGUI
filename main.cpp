@@ -46,7 +46,10 @@ int main() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if(slIMGUI_button("Button", -0.5f,-0.25f,1,0.5f)){
+
+		static bool toggle = false;
+		toggle = slIMGUI_button("Toggle Button", -0.5f,-0.25f,1,0.5f, toggle);
+		if(toggle){
 			printf("BUTTON1\n");
 		}
 		if(slIMGUI_button("Button2", -0.5f,0.5f,1,0.5f)){

@@ -11,7 +11,7 @@ static GLuint slIMGUI_vao;
 static Shader slIMGUI_shader;
 
 bool slIMGUI_init();
-bool slIMGUI_button(const char* text, float x, float y, float w, float h);
+bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state=false);
 void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour);
 GLuint slIMGUI_load_geometry();
 
@@ -20,14 +20,14 @@ bool slIMGUI_init(){
     slIMGUI_hovered_item = -1;
     slIMGUI_vao = slIMGUI_load_geometry();
 
-    slIMGUI_shader = load_shader("pass.vert", "pass.frag");
+    slIMGUI_shader = load_shader("UI.vert", "uniform_colour.frag");
     glUseProgram(slIMGUI_shader.id);
 	mat4 P = orthographic(-gl_aspect_ratio, gl_aspect_ratio, -1.0f, 1.0f, 0.0f, 100.0f);
 	glUniformMatrix4fv(slIMGUI_shader.P_loc, 1, GL_FALSE, P.m);
     return true;
 }
 
-bool slIMGUI_button(const char* text, float x, float y, float w, float h){
+bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state){
     int id = murmur3_32(text, strlen(text), 42);
 
     double mouse_x, mouse_y;
@@ -38,21 +38,21 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h){
     bool mouse_on = (mouse_x>x && mouse_y>y && mouse_x<(x+w) && mouse_y<(y+h));
     bool is_active = (id==slIMGUI_active_item);
     bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-    bool result = false;
-    vec4 colour = vec4(0.8f, 0, 0, 1); 
+    bool result = button_state;
+    vec4 colour = button_state ? vec4(0, 0.8f, 0, 1) : vec4(0.8f, 0, 0, 1); 
 
     if(is_active){
-        colour = vec4(0, 0.8f, 0, 1);
+        colour = colour - vec4(0.3f, 0.3f, 0.3f, 0);
         if(!mouse_clicked){
             slIMGUI_active_item = -1;
-            result = mouse_on;
+            result = mouse_on^button_state;
         }
     }
     else if(slIMGUI_active_item==-1 && slIMGUI_hovered_item==id && mouse_on && mouse_clicked){
         slIMGUI_active_item = id;
     }
     if(mouse_on && !mouse_clicked){
-        colour = vec4(0.8f, 0.8f, 0, 1);
+        colour = colour + vec4(0.3f, 0.3f, 0.3f, 0);
         slIMGUI_hovered_item = id;
     }
     if(slIMGUI_hovered_item==id && !mouse_on) slIMGUI_hovered_item = -1;
