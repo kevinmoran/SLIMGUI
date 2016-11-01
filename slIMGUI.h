@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "DynArray.h"
+#include "murmur3_32.h" //apparently good hash for speed, not sure but it'll do for now
 
 static int slIMGUI_hot_item; //ID of the item we've clicked
 static int slIMGUI_hovered_item; //ID of the item we're hovered over
@@ -32,7 +33,7 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h){
     //Add box/text to renderlist
     add_rect_to_vbo(x,y,w,h);
 
-    int id = 1; //TODO: generate a hash for this button
+    int id = murmur3_32(text, strlen(text), 42);
 
     double mouse_x, mouse_y;
     glfwGetCursorPos(window, &mouse_x, &mouse_y); //0->width, 0->height (down)
