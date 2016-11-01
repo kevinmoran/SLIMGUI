@@ -18,14 +18,6 @@ int main() {
 
 	slIMGUI_init();
 
-	//Load shader
-	Shader pass_shader("pass.vert", "pass.frag");
-	glUseProgram(pass_shader.prog_id);
-	GLuint colour_loc = glGetUniformLocation(pass_shader.prog_id, "quad_colour");
-	glUniform4fv(colour_loc, 1, vec4(0.7f,0,0,1).v);
-	mat4 P = orthographic(-gl_aspect_ratio, gl_aspect_ratio, -1.0f, 1.0f, 0.0f, 100.0f);
-	glUniformMatrix4fv(pass_shader.P_loc, 1, GL_FALSE, P.m);
-
 	double curr_time = glfwGetTime(), prev_time, dt;
 	//-------------------------------------------------------------------------------------//
 	//-------------------------------------MAIN LOOP---------------------------------------//
@@ -54,14 +46,12 @@ int main() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glUseProgram(pass_shader.prog_id);
 		if(slIMGUI_button("Button", -0.5f,-0.25f,1,0.5f)){
-			static bool toggle_button = false;
-			if(toggle_button) glUniform4fv(colour_loc, 1, vec4(0.7f,0,0,1).v);
-			else glUniform4fv(colour_loc, 1, vec4(0,0.7,0,1).v);
-			toggle_button = !toggle_button;
+			printf("BUTTON1\n");
 		}
-		slIMGUI_draw();
+		if(slIMGUI_button("Button2", -0.5f,0.5f,1,0.5f)){
+			printf("BUTTON2\n");
+		}
 
 		glfwSwapBuffers(window);
 	}//end main loop
