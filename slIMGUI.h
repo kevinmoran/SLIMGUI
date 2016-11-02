@@ -1,7 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "DynArray.h"
+//#include "DynArray.h"
 #include "Shader.h"
 #include "murmur3_32.h" //apparently good hash for speed, not sure but it'll do for now
 
@@ -13,15 +13,15 @@ static int slIMGUI_hovered_item; //ID of the item we're hovered over
 static GLuint slIMGUI_vao;
 static Shader slIMGUI_shader;
 
-const vec4 button_colour_on = vec4(0, 0.8f, 0, 1);
-const vec4 button_colour_off = vec4(0.8f, 0, 0, 1);
-const vec4 hover_modifier = vec4(0.2f, 0.2f, 0.2f, 0);
-const vec4 click_modifier = vec4(-0.2f, -0.2f, -0.2f, 0);
+const vec4 button_colour_on     = vec4(0, 0.8f, 0, 1);
+const vec4 button_colour_off    = vec4(0.8f, 0, 0, 1);
+const vec4 hover_modifier       = vec4(0.2f, 0.2f, 0.2f, 0);
+const vec4 click_modifier       = vec4(-0.2f, -0.2f, -0.2f, 0);
 
 bool slIMGUI_init();
 bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state=false);
 void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour);
-GLuint slIMGUI_load_geometry();
+static GLuint slIMGUI_load_geometry();
 
 bool slIMGUI_init(){
     slIMGUI_active_item = -1;
@@ -53,7 +53,7 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool b
     bool is_active = (id==slIMGUI_active_item);
     bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     bool result = button_state;
-    vec4 colour = button_state ? vec4(0, 0.8f, 0, 1) : vec4(0.8f, 0, 0, 1); 
+    vec4 colour = button_state ? button_colour_on : button_colour_off; 
 
     if(is_active){
         colour = colour + click_modifier;
@@ -93,7 +93,7 @@ void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour){
 //-------------------------BEHIND THE SCENES GRAPHICS STUFF----------------------------//
 //-------------------------------------------------------------------------------------//
 
-GLuint slIMGUI_load_geometry(){
+static GLuint slIMGUI_load_geometry(){
     GLfloat points[] = {
 		0, 1,
 		0, 0,
