@@ -5,6 +5,9 @@
 #include "Shader.h"
 #include "murmur3_32.h" //apparently good hash for speed, not sure but it'll do for now
 
+#define slIMGUI_hash_seed 42
+#define slIMGUI_hash(s) murmur3_32(s, strlen(s), slIMGUI_hash_seed)
+
 static int slIMGUI_active_item; //ID of the item we've clicked
 static int slIMGUI_hovered_item; //ID of the item we're hovered over
 static GLuint slIMGUI_vao;
@@ -33,7 +36,7 @@ bool slIMGUI_init(){
 }
 
 bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state){
-    int id = murmur3_32(text, strlen(text), 42);
+    int id = slIMGUI_hash(text);
 
     //Map pos and size to screenspace coordinates
     x = 2*x*gl_aspect_ratio - gl_aspect_ratio; //from [0->1] to [(-aspect_ratio)->aspect_ratio]
