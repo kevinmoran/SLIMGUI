@@ -44,18 +44,12 @@ bool slIMGUI_init(){
 bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state){
     int id = slIMGUI_hash(text);
 
-    //Map pos and size to screenspace coordinates
-    x = 2*x*gl_aspect_ratio - gl_aspect_ratio; //from [0->1] to [(-aspect_ratio)->aspect_ratio]
-    y = 1 - 2*y; //from [1->0] to [-1->1]
-    w = 2*w*gl_aspect_ratio;
-    h = 2*h;
-
     double mouse_x, mouse_y;
     glfwGetCursorPos(window, &mouse_x, &mouse_y); //0->width, 0->height (down)
-    mouse_x = 2*gl_aspect_ratio*mouse_x/gl_width - gl_aspect_ratio; //(-aspect_ratio)->aspect_ratio
-    mouse_y = 1 - (2*mouse_y)/gl_height; //(-1)->1 (up)
+    mouse_x = mouse_x/gl_width; //Map to 0->1 range
+    mouse_y = mouse_y/gl_height;
 
-    bool mouse_on = (mouse_x>x && mouse_y<y && mouse_x<(x+w) && mouse_y>(y-h));
+    bool mouse_on = (mouse_x>x && mouse_y>y && mouse_x<(x+w) && mouse_y<(y+h));
     bool is_active = (id==slIMGUI_clicked_item);
     bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     bool result = button_state;
@@ -86,18 +80,12 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool b
 bool slIMGUI_panel(const char* text, float x, float y, float w, float h){
     int id = slIMGUI_hash(text);
 
-    //Map pos and size to screenspace coordinates
-    x = 2*x*gl_aspect_ratio - gl_aspect_ratio; //from [0->1] to [(-aspect_ratio)->aspect_ratio]
-    y = 1 - 2*y; //from [1->0] to [-1->1]
-    w = 2*w*gl_aspect_ratio;
-    h = 2*h;
-
     double mouse_x, mouse_y;
     glfwGetCursorPos(window, &mouse_x, &mouse_y); //0->width, 0->height (down)
-    mouse_x = 2*gl_aspect_ratio*mouse_x/gl_width - gl_aspect_ratio; //(-aspect_ratio)->aspect_ratio
-    mouse_y = 1 - (2*mouse_y)/gl_height; //(-1)->1 (up)
+    mouse_x = mouse_x/gl_width; //Map to 0->1 range
+    mouse_y = mouse_y/gl_height;
 
-    bool mouse_on_header = (mouse_x>x && mouse_y<y && mouse_x<(x+w) && mouse_y>(y-2*panel_header_height));
+    bool mouse_on_header = (mouse_x>x && mouse_y>y && mouse_x<(x+w) && mouse_y<(y+panel_header_height));
     bool is_active = (id==slIMGUI_clicked_item);
     bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     vec4 final_header_colour = panel_header_colour; 
@@ -120,15 +108,23 @@ bool slIMGUI_panel(const char* text, float x, float y, float w, float h){
     if(slIMGUI_hovered_item==id && !mouse_on_header) slIMGUI_hovered_item = -1;
 
     //Draw
-    slIMGUI_draw_rect(x, y, w, h, panel_border_colour); //border
-    slIMGUI_draw_rect(x+2*border_thickness, y-2*border_thickness, w-2*2*border_thickness, 2*panel_header_height-4*border_thickness, final_header_colour); //header
-    slIMGUI_draw_rect(x+2*border_thickness, y-2*panel_header_height, 
-                    w-2*2*border_thickness, h-2*panel_header_height-2*border_thickness, panel_colour); //body
+    //Border
+    slIMGUI_draw_rect(x, y, w, h, panel_border_colour);
+    //Header
+    slIMGUI_draw_rect(x+border_thickness, y+border_thickness, w-2*border_thickness, panel_header_height-2*border_thickness, final_header_colour);
+    //Body
+    slIMGUI_draw_rect(x+border_thickness, y+panel_header_height, w-2*border_thickness, h-panel_header_height-border_thickness, panel_colour);
 
     return result;
 }
 
 void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour){
+    //Map pos and size to screenspace coordinates
+    x = 2*gl_aspect_ratio*x - gl_aspect_ratio; //from [0->1] to [(-aspect_ratio)->aspect_ratio]
+    y = 1 - 2*y; //from [1->0] to [-1->1]
+    w = 2*w*gl_aspect_ratio;
+    h = 2*h;
+
     mat4 M = scale(identity_mat4(), vec3(w,h,1));
     M = translate(M, vec3(0,-h,0));
     M = translate(M, vec3(x,y,0));
