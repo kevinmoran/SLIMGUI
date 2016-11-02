@@ -15,11 +15,16 @@ static Shader slIMGUI_shader;
 
 const vec4 button_colour_on     = vec4(0, 0.8f, 0, 1);
 const vec4 button_colour_off    = vec4(0.8f, 0, 0, 1);
+const vec4 panel_colour         = vec4(0.7f, 0.7f, 0.8f, 1);
+const vec4 panel_header_colour  = vec4(0.3f, 0.3f, 0.8f, 1);
+const float panel_header_height = 0.1f;
+const float border_thickness    = 0.01f;
 const vec4 hover_modifier       = vec4(0.2f, 0.2f, 0.2f, 0);
 const vec4 click_modifier       = vec4(-0.2f, -0.2f, -0.2f, 0);
 
 bool slIMGUI_init();
 bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state=false);
+bool slIMGUI_panel(const char* text, float x, float y, float w, float h);
 void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour);
 static GLuint slIMGUI_load_geometry();
 
@@ -41,7 +46,7 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool b
     //Map pos and size to screenspace coordinates
     x = 2*x*gl_aspect_ratio - gl_aspect_ratio; //from [0->1] to [(-aspect_ratio)->aspect_ratio]
     y = 1 - 2*y; //from [1->0] to [-1->1]
-    w = 2*w;
+    w = 2*w*gl_aspect_ratio;
     h = 2*h;
 
     double mouse_x, mouse_y;
@@ -77,6 +82,51 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool b
     return result;
 }
 
+bool slIMGUI_panel(const char* text, float x, float y, float w, float h){
+    int id = slIMGUI_hash(text);
+
+    //Map pos and size to screenspace coordinates
+    x = 2*x*gl_aspect_ratio - gl_aspect_ratio; //from [0->1] to [(-aspect_ratio)->aspect_ratio]
+    y = 1 - 2*y; //from [1->0] to [-1->1]
+    w = 2*w*gl_aspect_ratio;
+    h = 2*h;
+
+    double mouse_x, mouse_y;
+    glfwGetCursorPos(window, &mouse_x, &mouse_y); //0->width, 0->height (down)
+    mouse_x = 2*gl_aspect_ratio*mouse_x/gl_width - gl_aspect_ratio; //(-aspect_ratio)->aspect_ratio
+    mouse_y = 1 - (2*mouse_y)/gl_height; //(-1)->1 (up)
+
+    bool mouse_on_header = (mouse_x>x && mouse_y<y && mouse_x<(x+w) && mouse_y>(y-2*panel_header_height));
+    bool is_active = (id==slIMGUI_active_item);
+    bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    vec4 final_header_colour = panel_header_colour; 
+    bool result = false;
+
+    if(is_active){
+        final_header_colour = final_header_colour + click_modifier;
+        if(!mouse_clicked){
+            slIMGUI_active_item = -1;
+            result = mouse_on_header;
+        }
+    }
+    else if(slIMGUI_active_item==-1 && slIMGUI_hovered_item==id && mouse_on_header && mouse_clicked){
+        slIMGUI_active_item = id;
+    }
+    if(mouse_on_header && !mouse_clicked){
+        final_header_colour = final_header_colour + hover_modifier;
+        slIMGUI_hovered_item = id;
+    }
+    if(slIMGUI_hovered_item==id && !mouse_on_header) slIMGUI_hovered_item = -1;
+
+    //Draw
+    slIMGUI_draw_rect(x, y, w, h, final_header_colour+click_modifier); //border
+    slIMGUI_draw_rect(x+2*border_thickness, y-2*border_thickness, w-2*2*border_thickness, 2*panel_header_height-4*border_thickness, final_header_colour); //header
+    slIMGUI_draw_rect(x+2*border_thickness, y-2*panel_header_height, 
+                    w-2*2*border_thickness, h-2*panel_header_height-2*border_thickness, panel_colour); //body
+
+    return result;
+}
+
 void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour){
     mat4 M = scale(identity_mat4(), vec3(w,h,1));
     M = translate(M, vec3(0,-h,0));
@@ -86,7 +136,9 @@ void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour){
 	glUniform4fv(colour_loc, 1, colour.v);
 	glUniformMatrix4fv(slIMGUI_shader.M_loc, 1, GL_FALSE, M.m);
     glBindVertexArray(slIMGUI_vao);
+    glDisable(GL_DEPTH_TEST);
     glDrawArrays(GL_TRIANGLES, 0, 6);
+    glEnable(GL_DEPTH_TEST);
 }
 
 //-------------------------------------------------------------------------------------//

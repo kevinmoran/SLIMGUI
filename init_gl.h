@@ -20,7 +20,7 @@ bool init_gl(GLFWwindow* &window, int window_width, const int window_height) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	#endif
 	
-	window = glfwCreateWindow(window_width, window_height, "Wander", NULL, NULL);
+	window = glfwCreateWindow(window_width, window_height, "slIMGUI", NULL, NULL);
 	if (!window) {
 		fprintf(stderr, "ERROR: could not open window with GLFW3\n");
 		glfwTerminate();
