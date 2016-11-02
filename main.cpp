@@ -46,7 +46,7 @@ int main() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//Calculated UI dimensions
+		//Calculate UI dimensions
 		float panel_x = 0.1f; float panel_y = 0.1f;
 		float panel_w = 0.5f; float panel_h = 0.8f;
 		float panel_padding_x = 0.025f; float panel_padding_y = 0.05f;
@@ -60,15 +60,13 @@ int main() {
 
 		//Buttons
 		static bool toggle = false;
-		toggle = slIMGUI_button("Toggle Button", panel_x+panel_padding_x+border_thickness,
-								first_button_y,
+		toggle = slIMGUI_button("Toggle Button", panel_x+panel_padding_x+border_thickness, first_button_y,
 								button_width, button_height, toggle);
 		if(toggle){
 			printf("BUTTON1\n");
 		}
-		if(slIMGUI_button("Button2", panel_x+panel_padding_x+border_thickness,
-							first_button_y+button_height+panel_padding_y,
-							button_width,button_height)){
+		if(slIMGUI_button("Button2", panel_x+panel_padding_x+border_thickness, first_button_y+button_height+panel_padding_y,
+							button_width, button_height)){
 			printf("BUTTON2\n");
 		}
 
