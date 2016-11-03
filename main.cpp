@@ -52,20 +52,20 @@ int main() {
 		float window_padding_x = 0.025f; float window_padding_y = 0.05f;
 		int num_buttons = 2;
 		float first_button_y = window_y+window_header_height+window_padding_y;
-		float button_width = window_w -2*(window_padding_x+border_thickness);
-		float button_height = (window_h-window_header_height - window_padding_y*(num_buttons+1)-border_thickness)/num_buttons;
+		float button_width = window_w -2*(window_padding_x+border_thickness_x);
+		float button_height = (window_h-window_header_height - window_padding_y*(num_buttons+1)-border_thickness_y)/num_buttons;
 
 		//Panel
 		slIMGUI_window("Window1", window_x,window_y,window_w,window_h);
 
 		//Buttons
 		static bool toggle = false;
-		toggle = slIMGUI_button("Toggle Button", window_x+window_padding_x+border_thickness, first_button_y,
+		toggle = slIMGUI_button("Toggle Button", window_x+window_padding_x+border_thickness_x, first_button_y,
 								button_width, button_height, toggle);
 		if(toggle){
 			printf("BUTTON1\n");
 		}
-		if(slIMGUI_button("Button2", window_x+window_padding_x+border_thickness, first_button_y+button_height+window_padding_y,
+		if(slIMGUI_button("Button2", window_x+window_padding_x+border_thickness_x, first_button_y+button_height+window_padding_y,
 							button_width, button_height)){
 			printf("BUTTON2\n");
 		}

@@ -19,7 +19,8 @@ const vec4 window_colour        = vec4(0.1f, 0.1f, 0.1f, 1);
 const vec4 window_header_colour = vec4(0.3f, 0.3f, 0.3f, 1);
 const vec4 window_border_colour = vec4(0.0f, 0.0f, 0.0f, 1);
 const float window_header_height= 0.1f;
-const float border_thickness    = 0.005f;
+const float border_thickness_y  = 0.005f;
+const float border_thickness_x  = border_thickness_y/gl_aspect_ratio;
 const vec4 hover_modifier       = vec4(0.02f, 0.02f, 0.05f, 0);
 const vec4 click_modifier       = vec4(-0.02f, -0.02f, -0.03f, 0);
 
@@ -111,9 +112,9 @@ bool slIMGUI_window(const char* text, float x, float y, float w, float h){
     //Border
     slIMGUI_draw_rect(x, y, w, h, window_border_colour);
     //Header
-    slIMGUI_draw_rect(x+border_thickness, y+border_thickness, w-2*border_thickness, window_header_height-2*border_thickness, final_colour);
+    slIMGUI_draw_rect(x+border_thickness_x, y+border_thickness_y, w-2*border_thickness_x, window_header_height-2*border_thickness_y, final_colour);
     //Body
-    slIMGUI_draw_rect(x+border_thickness, y+window_header_height, w-2*border_thickness, h-window_header_height-border_thickness, window_colour);
+    slIMGUI_draw_rect(x+border_thickness_x, y+window_header_height, w-2*border_thickness_x, h-window_header_height-border_thickness_y, window_colour);
 
     return result;
 }
@@ -122,7 +123,7 @@ void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour){
     //Map pos and size to screenspace coordinates
     x = 2*gl_aspect_ratio*x - gl_aspect_ratio; //from [0->1] to [(-aspect_ratio)->aspect_ratio]
     y = 1 - 2*y; //from [1->0] to [-1->1]
-    w = 2*w*gl_aspect_ratio;
+    w = 2*gl_aspect_ratio*w;
     h = 2*h;
 
     mat4 M = scale(identity_mat4(), vec3(w,h,1));
