@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 //#include "DynArray.h"
+#include "maths_funcs.h"
 #include "Shader.h"
 #include "murmur3_32.h" //apparently good hash for speed, not sure but it'll do for now
 
@@ -52,12 +53,12 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool b
     mouse_y = mouse_y/gl_height;
 
     bool mouse_on = (mouse_x>x && mouse_y>y && mouse_x<(x+w) && mouse_y<(y+h));
-    bool is_active = (id==slIMGUI_clicked_item);
+    bool is_clicked = (id==slIMGUI_clicked_item);
     bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     bool result = button_state;
     vec4 colour = button_state ? button_colour_on : button_colour_off; 
 
-    if(is_active){
+    if(is_clicked){
         colour = colour + click_modifier;
         if(!mouse_clicked){
             slIMGUI_clicked_item = -1;
@@ -88,12 +89,12 @@ bool slIMGUI_window(const char* text, float x, float y, float w, float h){
     mouse_y = mouse_y/gl_height;
 
     bool mouse_on = (mouse_x>x && mouse_y>y && mouse_x<(x+w) && mouse_y<(y+window_header_height));
-    bool is_active = (id==slIMGUI_clicked_item);
+    bool is_clicked = (id==slIMGUI_clicked_item);
     bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     vec4 final_colour = window_header_colour; 
     bool result = false;
 
-    if(is_active){
+    if(is_clicked){
         final_colour = final_colour + click_modifier;
         if(!mouse_clicked){
             slIMGUI_clicked_item = -1;
@@ -132,12 +133,12 @@ bool slIMGUI_window(const char* text, float* x, float* y, float w, float h){
     mouse_y = mouse_y/gl_height;
 
     bool mouse_on = (mouse_x>*x && mouse_y>*y && mouse_x<(*x+w) && mouse_y<(*y+window_header_height));
-    bool is_active = (id==slIMGUI_clicked_item);
+    bool is_clicked = (id==slIMGUI_clicked_item);
     bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     vec4 final_colour = window_header_colour; 
     bool result = false;
 
-    if(is_active){
+    if(is_clicked){
         final_colour = final_colour + click_modifier;
         if(!mouse_clicked){
             slIMGUI_clicked_item = -1;
@@ -147,8 +148,8 @@ bool slIMGUI_window(const char* text, float* x, float* y, float w, float h){
         float dy = mouse_y-prev_mouse_y;
         *x += dx;
         *y += dy;
-        *x = MIN(MAX(*x,-0.9f*w),0.9f);
-        *y = MIN(MAX(*y,-0.9f*h),0.9f);
+        *x = MIN(MAX(*x,-0.95f*w),0.95f); //Don't allow windows to be dragged irretrievably off-screen
+        *y = MIN(MAX(*y,-0.95f*h),0.95f);
     }
     else if(slIMGUI_clicked_item==-1 && slIMGUI_hovered_item==id && mouse_on && mouse_clicked){
         slIMGUI_clicked_item = id;
