@@ -13,16 +13,15 @@ static int slIMGUI_hovered_item; //ID of the item we're hovered over
 static GLuint slIMGUI_vao;
 static Shader slIMGUI_shader;
 
-const vec4 button_colour_on     = vec4(0.4f, 0.6f, 0.4f, 1);
-const vec4 button_colour_off    = vec4(0.4f, 0.4f, 0.6f, 1);
-const vec4 panel_colour         = vec4(0.7f, 0.7f, 0.8f, 1);
-const vec4 window_colour         = vec4(0.7f, 0.7f, 0.8f, 1);
-const vec4 window_header_colour  = vec4(0.2f, 0.2f, 0.7f, 1);
-const vec4 window_border_colour  = vec4(0.3f, 0.3f, 0.6f, 1);
-const float window_header_height = 0.1f;
-const float border_thickness    = 0.01f;
-const vec4 hover_modifier       = vec4(0.2f, 0.2f, 0.2f, 0);
-const vec4 click_modifier       = vec4(-0.2f, -0.2f, -0.2f, 0);
+const vec4 button_colour_on     = vec4(0.15f, 0.25f, 0.5f, 1);
+const vec4 button_colour_off    = vec4(0.15f, 0.15f, 0.15f, 1);
+const vec4 window_colour        = vec4(0.1f, 0.1f, 0.1f, 1);
+const vec4 window_header_colour = vec4(0.3f, 0.3f, 0.3f, 1);
+const vec4 window_border_colour = vec4(0.0f, 0.0f, 0.0f, 1);
+const float window_header_height= 0.1f;
+const float border_thickness    = 0.005f;
+const vec4 hover_modifier       = vec4(0.02f, 0.02f, 0.05f, 0);
+const vec4 click_modifier       = vec4(-0.02f, -0.02f, -0.03f, 0);
 
 bool slIMGUI_init();
 bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state=false);
