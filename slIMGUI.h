@@ -16,16 +16,17 @@ static Shader slIMGUI_shader;
 const vec4 button_colour_on     = vec4(0.4f, 0.6f, 0.4f, 1);
 const vec4 button_colour_off    = vec4(0.4f, 0.4f, 0.6f, 1);
 const vec4 panel_colour         = vec4(0.7f, 0.7f, 0.8f, 1);
-const vec4 panel_header_colour  = vec4(0.2f, 0.2f, 0.7f, 1);
-const vec4 panel_border_colour  = vec4(0.3f, 0.3f, 0.6f, 1);
-const float panel_header_height = 0.1f;
+const vec4 window_colour         = vec4(0.7f, 0.7f, 0.8f, 1);
+const vec4 window_header_colour  = vec4(0.2f, 0.2f, 0.7f, 1);
+const vec4 window_border_colour  = vec4(0.3f, 0.3f, 0.6f, 1);
+const float window_header_height = 0.1f;
 const float border_thickness    = 0.01f;
 const vec4 hover_modifier       = vec4(0.2f, 0.2f, 0.2f, 0);
 const vec4 click_modifier       = vec4(-0.2f, -0.2f, -0.2f, 0);
 
 bool slIMGUI_init();
 bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state=false);
-bool slIMGUI_panel(const char* text, float x, float y, float w, float h);
+bool slIMGUI_window(const char* text, float x, float y, float w, float h);
 void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour);
 static GLuint slIMGUI_load_geometry();
 
@@ -77,7 +78,7 @@ bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool b
     return result;
 }
 
-bool slIMGUI_panel(const char* text, float x, float y, float w, float h){
+bool slIMGUI_window(const char* text, float x, float y, float w, float h){
     int id = slIMGUI_hash(text);
 
     double mouse_x, mouse_y;
@@ -85,35 +86,35 @@ bool slIMGUI_panel(const char* text, float x, float y, float w, float h){
     mouse_x = mouse_x/gl_width; //Map to 0->1 range
     mouse_y = mouse_y/gl_height;
 
-    bool mouse_on_header = (mouse_x>x && mouse_y>y && mouse_x<(x+w) && mouse_y<(y+panel_header_height));
+    bool mouse_on = (mouse_x>x && mouse_y>y && mouse_x<(x+w) && mouse_y<(y+window_header_height));
     bool is_active = (id==slIMGUI_clicked_item);
     bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-    vec4 final_header_colour = panel_header_colour; 
+    vec4 final_colour = window_header_colour; 
     bool result = false;
 
     if(is_active){
-        final_header_colour = final_header_colour + click_modifier;
+        final_colour = final_colour + click_modifier;
         if(!mouse_clicked){
             slIMGUI_clicked_item = -1;
-            result = mouse_on_header;
+            result = mouse_on;
         }
     }
-    else if(slIMGUI_clicked_item==-1 && slIMGUI_hovered_item==id && mouse_on_header && mouse_clicked){
+    else if(slIMGUI_clicked_item==-1 && slIMGUI_hovered_item==id && mouse_on && mouse_clicked){
         slIMGUI_clicked_item = id;
     }
-    if(mouse_on_header && !mouse_clicked){
-        final_header_colour = final_header_colour + hover_modifier;
+    if(mouse_on && !mouse_clicked){
+        final_colour = final_colour + hover_modifier;
         slIMGUI_hovered_item = id;
     }
-    if(slIMGUI_hovered_item==id && !mouse_on_header) slIMGUI_hovered_item = -1;
+    if(slIMGUI_hovered_item==id && !mouse_on) slIMGUI_hovered_item = -1;
 
     //Draw
     //Border
-    slIMGUI_draw_rect(x, y, w, h, panel_border_colour);
+    slIMGUI_draw_rect(x, y, w, h, window_border_colour);
     //Header
-    slIMGUI_draw_rect(x+border_thickness, y+border_thickness, w-2*border_thickness, panel_header_height-2*border_thickness, final_header_colour);
+    slIMGUI_draw_rect(x+border_thickness, y+border_thickness, w-2*border_thickness, window_header_height-2*border_thickness, final_colour);
     //Body
-    slIMGUI_draw_rect(x+border_thickness, y+panel_header_height, w-2*border_thickness, h-panel_header_height-border_thickness, panel_colour);
+    slIMGUI_draw_rect(x+border_thickness, y+window_header_height, w-2*border_thickness, h-window_header_height-border_thickness, window_colour);
 
     return result;
 }
