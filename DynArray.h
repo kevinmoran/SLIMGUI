@@ -3,9 +3,9 @@
 #include <assert.h>
 
 class DynArray{
-    int _capacity;
+    unsigned int _capacity;
 public: 
-    int size;
+    unsigned int size;
     float* data;
 
     DynArray(){
@@ -56,12 +56,12 @@ public:
     void print(){
         if(size==0) return;
         printf("(\n");
-        for(int i=0; i<size; i++){
+        for(unsigned int i=0; i<size; i++){
             printf("%f ", data[i]);
         }
         printf("\n)\n");
     }
-    float& operator[](int rhs){
+    float& operator[](unsigned int rhs){
         assert(rhs<size);
         return data[rhs];
     }
