@@ -27,6 +27,7 @@ const vec4 click_modifier       = vec4(-0.02f, -0.02f, -0.03f, 0);
 bool slIMGUI_init();
 bool slIMGUI_button(const char* text, float x, float y, float w, float h, bool button_state=false);
 bool slIMGUI_window(const char* text, float x, float y, float w, float h);
+bool slIMGUI_window(const char* text, float* x, float* y, float w, float h); //movable
 void slIMGUI_draw_rect(float x, float y, float w, float h, vec4 colour);
 static GLuint slIMGUI_load_geometry();
 
@@ -115,6 +116,59 @@ bool slIMGUI_window(const char* text, float x, float y, float w, float h){
     slIMGUI_draw_rect(x+border_thickness_x, y+border_thickness_y, w-2*border_thickness_x, window_header_height-2*border_thickness_y, final_colour);
     //Body
     slIMGUI_draw_rect(x+border_thickness_x, y+window_header_height, w-2*border_thickness_x, h-window_header_height-border_thickness_y, window_colour);
+
+    return result;
+}
+
+//Draggable window
+bool slIMGUI_window(const char* text, float* x, float* y, float w, float h){
+    int id = slIMGUI_hash(text);
+
+    static double mouse_x, mouse_y;
+    static double prev_mouse_x = mouse_x;
+    static double prev_mouse_y = mouse_y;
+    glfwGetCursorPos(window, &mouse_x, &mouse_y); //0->width, 0->height (down)
+    mouse_x = mouse_x/gl_width; //Map to 0->1 range
+    mouse_y = mouse_y/gl_height;
+
+    bool mouse_on = (mouse_x>*x && mouse_y>*y && mouse_x<(*x+w) && mouse_y<(*y+window_header_height));
+    bool is_active = (id==slIMGUI_clicked_item);
+    bool mouse_clicked = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    vec4 final_colour = window_header_colour; 
+    bool result = false;
+
+    if(is_active){
+        final_colour = final_colour + click_modifier;
+        if(!mouse_clicked){
+            slIMGUI_clicked_item = -1;
+            result = mouse_on;
+        }
+        float dx = mouse_x-prev_mouse_x;
+        float dy = mouse_y-prev_mouse_y;
+        *x += dx;
+        *y += dy;
+        *x = MIN(MAX(*x,-0.9f*w),0.9f);
+        *y = MIN(MAX(*y,-0.9f*h),0.9f);
+    }
+    else if(slIMGUI_clicked_item==-1 && slIMGUI_hovered_item==id && mouse_on && mouse_clicked){
+        slIMGUI_clicked_item = id;
+    }
+    if(mouse_on && !mouse_clicked){
+        final_colour = final_colour + hover_modifier;
+        slIMGUI_hovered_item = id;
+    }
+    if(slIMGUI_hovered_item==id && !mouse_on) slIMGUI_hovered_item = -1;
+
+    //Draw
+    //Border
+    slIMGUI_draw_rect(*x, *y, w, h, window_border_colour);
+    //Header
+    slIMGUI_draw_rect(*x+border_thickness_x, *y+border_thickness_y, w-2*border_thickness_x, window_header_height-2*border_thickness_y, final_colour);
+    //Body
+    slIMGUI_draw_rect(*x+border_thickness_x, *y+window_header_height, w-2*border_thickness_x, h-window_header_height-border_thickness_y, window_colour);
+
+    prev_mouse_x = mouse_x;
+    prev_mouse_y = mouse_y;
 
     return result;
 }

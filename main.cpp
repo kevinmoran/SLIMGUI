@@ -47,7 +47,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Calculate UI dimensions
-		float window_x = 0.1f; float window_y = 0.1f;
+		static float window_x = 0.1f; static float window_y = 0.1f;
 		float window_w = 0.5f; float window_h = 0.8f;
 		float window_padding_x = 0.025f; float window_padding_y = 0.05f;
 		int num_buttons = 2;
@@ -56,7 +56,7 @@ int main() {
 		float button_height = (window_h-window_header_height - window_padding_y*(num_buttons+1)-border_thickness_y)/num_buttons;
 
 		//Panel
-		slIMGUI_window("Window1", window_x,window_y,window_w,window_h);
+		slIMGUI_window("Window1", &window_x,&window_y,window_w,window_h);
 
 		//Buttons
 		static bool toggle = false;
