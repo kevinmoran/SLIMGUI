@@ -394,49 +394,59 @@ void slIMGUI_text(const char* text, float x, float y, float w, float h){
     int num_glyphs = 0;
     glBindBuffer(GL_ARRAY_BUFFER, text_vbo);
 
+    float vert_data[SLIMGUI_MAX_NUM_CHARS*6*4];
     while(*text){
         int i = (int)(*text) - glyphs_Optima[0].code_point;
         Glyph glyph = glyphs_Optima[i];
 
-        float vert_data[] = {
-            //topleft
-            cursor_pos - (scale*(float)glyph.origin_x/gl_width),        //x
-            y -0.75f*h + (scale*(float)glyph.origin_y/gl_height),       //y //0.75=magic, just works
-            (float)glyph.x/font_Optima.width,          //u
-            1-((float)glyph.y/font_Optima.height),     //v
-            //bottomleft
-            cursor_pos - (scale*(float)glyph.origin_x/gl_width),
-            y - 0.75f*h + scale*((float)glyph.origin_y-glyph.h)/gl_height,
-            (float)glyph.x/font_Optima.width,
-            1-((float)(glyph.y+glyph.h)/font_Optima.height),
-            //bottomright
-            cursor_pos + scale*(float)(glyph.w-glyph.origin_x)/gl_width,
-            y - 0.75f*h + scale*(float)(glyph.origin_y-glyph.h)/gl_height,
-            (float)(glyph.x+glyph.w)/font_Optima.width,
-            1-((float)(glyph.y+glyph.h)/font_Optima.height),
-            //topleft
-            cursor_pos - (scale*(float)glyph.origin_x/gl_width),
-            y - 0.75f*h + (scale*(float)glyph.origin_y/gl_height),
-            (float)glyph.x/font_Optima.width,
-            1-((float)glyph.y/font_Optima.height),
-            //bottomright
-            cursor_pos + scale*(float)(glyph.w-glyph.origin_x)/gl_width,
-            y - 0.75f*h + scale*(float)(glyph.origin_y-glyph.h)/gl_height,
-            (float)(glyph.x+glyph.w)/font_Optima.width,
-            1-((float)(glyph.y+glyph.h)/font_Optima.height),
-            //topright
-            cursor_pos + scale*(float)(glyph.w-glyph.origin_x)/gl_width,
-            y - 0.75f*h + (scale*(float)glyph.origin_y/gl_height),
-            (float)(glyph.x+glyph.w)/font_Optima.width,
-            1-((float)glyph.y/font_Optima.height)
-        };
+        //Calculate data for quad
+        float x_l = cursor_pos - (scale*(float)glyph.origin_x / gl_width);
+        float x_r = cursor_pos + (scale*(float)(glyph.w-glyph.origin_x) / gl_width);
+        float y_t = y - 0.75f*h + (scale*(float)glyph.origin_y / gl_height); //0.75=magic, just works
+        float y_b = y - 0.75f*h + (scale*((float)glyph.origin_y-glyph.h) / gl_height); //0.75=magic, just works
+        float u_l = (float)glyph.x / font_Optima.width;
+        float u_r = (float)(glyph.x+glyph.w) / font_Optima.width;
+        float v_t = 1 - ((float)glyph.y / font_Optima.height);
+        float v_b = 1 - ((float)(glyph.y+glyph.h) / font_Optima.height);
 
-	    glBufferSubData(GL_ARRAY_BUFFER, num_glyphs*sizeof(vert_data), sizeof(vert_data), vert_data);
+        //Add triangles to array:
+        //topleft
+        vert_data[24*num_glyphs   ] = x_l;
+        vert_data[24*num_glyphs+ 1] = y_t;
+        vert_data[24*num_glyphs+ 2] = u_l;
+        vert_data[24*num_glyphs+ 3] = v_t;
+        //bottomleft
+        vert_data[24*num_glyphs+ 4] = x_l;
+        vert_data[24*num_glyphs+ 5] = y_b;
+        vert_data[24*num_glyphs+ 6] = u_l;
+        vert_data[24*num_glyphs+ 7] = v_b;
+        //bottomright
+        vert_data[24*num_glyphs+ 8] = x_r;
+        vert_data[24*num_glyphs+ 9] = y_b;
+        vert_data[24*num_glyphs+10] = u_r;
+        vert_data[24*num_glyphs+11] = v_b;
+        //topleft
+        vert_data[24*num_glyphs+12] = x_l;
+        vert_data[24*num_glyphs+13] = y_t;
+        vert_data[24*num_glyphs+14] = u_l;
+        vert_data[24*num_glyphs+15] = v_t;
+        //bottomright
+        vert_data[24*num_glyphs+16] = x_r;
+        vert_data[24*num_glyphs+17] = y_b;
+        vert_data[24*num_glyphs+18] = u_r;
+        vert_data[24*num_glyphs+19] = v_b;
+        //topright
+        vert_data[24*num_glyphs+20] = x_r;
+        vert_data[24*num_glyphs+21] = y_t;
+        vert_data[24*num_glyphs+22] = u_r;
+        vert_data[24*num_glyphs+23] = v_t;
 
         cursor_pos+= scale*(float)glyph.advance/gl_width;
         text++;
         num_glyphs++;
     }
+
+    glBufferSubData(GL_ARRAY_BUFFER, 0, num_glyphs*24*sizeof(float), vert_data);
 
     glUseProgram(font_shader.id);
 	glActiveTexture(GL_TEXTURE0);
