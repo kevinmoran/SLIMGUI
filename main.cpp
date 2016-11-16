@@ -17,7 +17,7 @@ int main() {
 	if (!init_gl(window, gl_width, gl_height)){ return 1; }
 
 	slIMGUI_init();
-
+	
 	double curr_time = glfwGetTime(), prev_time, dt;
 	//-------------------------------------------------------------------------------------//
 	//-------------------------------------MAIN LOOP---------------------------------------//
@@ -55,20 +55,25 @@ int main() {
 		float button_width = window_w -2*(window_padding_x+border_thickness_x);
 		float button_height = (window_h-window_header_height - window_padding_y*(num_buttons+1)-border_thickness_y)/num_buttons;
 
-		//Panel
-		slIMGUI_window("Window1", &window_x,&window_y,window_w,window_h);
+		//Window
+		slIMGUI_window("Look! A menu!", &window_x,&window_y,window_w,window_h);
 
 		//Buttons
 		static bool toggle = false;
-		toggle = slIMGUI_button("Toggle Button", window_x+window_padding_x+border_thickness_x, first_button_y,
+		toggle = slIMGUI_button("Thingamajig", window_x+window_padding_x+border_thickness_x, first_button_y,
 								button_width, button_height, toggle);
 		if(toggle){
-			printf("BUTTON1\n");
+			slIMGUI_text("Thingamajig Engaged!", 0.6f, 0, 0.4f, 0.1f);
 		}
-		if(slIMGUI_button("Button2", window_x+window_padding_x+border_thickness_x, first_button_y+button_height+window_padding_y,
-							button_width, button_height)){
-			printf("BUTTON2\n");
+		const static float thing_x = 0.6f;
+		static float thing_y = 1.2f;
+		if(slIMGUI_button("Do the thing!", window_x+window_padding_x+border_thickness_x, 
+											first_button_y+button_height+window_padding_y,
+											button_width, button_height)){
+			thing_y = 0.1f;
 		}
+		slIMGUI_text("The thing!", thing_x, thing_y, 0.4f, 0.1f);
+		thing_y +=dt;
 
 		glfwSwapBuffers(window);
 	}//end main loop

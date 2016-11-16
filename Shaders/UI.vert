@@ -1,4 +1,4 @@
-#version 410
+#version 140
 
 in vec2 vp;
 uniform mat4 M,P;
