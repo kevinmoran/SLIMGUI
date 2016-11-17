@@ -15,11 +15,11 @@ static int slIMGUI_hovered_item; //ID of the item we're hovered over
 static GLuint slIMGUI_vao, text_vbo, text_vao, font_texture;
 static Shader slIMGUI_shader, font_shader;
 
-const vec4 button_colour_on     = vec4(0.15f, 0.25f, 0.5f, 1);
-const vec4 button_colour_off    = vec4(0.15f, 0.15f, 0.15f, 1);
-const vec4 window_colour        = vec4(0.1f, 0.1f, 0.1f, 1);
-const vec4 window_header_colour = vec4(0.3f, 0.3f, 0.3f, 1);
-const vec4 window_border_colour = vec4(0.0f, 0.0f, 0.0f, 1);
+const vec4 button_colour_on     = vec4(155/255.0f, 89/255.0f, 182/255.0f, 0.8f);
+const vec4 button_colour_off    = vec4(90/255.0f, 40/255.0f, 110/255.0f, 0.8f);
+const vec4 window_colour        = vec4(80/255.0f, 40/255.0f, 80/255.0f, 0.8f);
+const vec4 window_header_colour = vec4(142/255.0f, 68/255.0f, 173/255.0f, 0.8f);
+const vec4 window_border_colour = vec4(0,0,0,1);
 const float window_header_height= 0.1f;
 const float border_thickness_y  = 0.005f;
 const float border_thickness_x  = border_thickness_y/gl_aspect_ratio;
@@ -235,7 +235,9 @@ static GLuint slIMGUI_load_geometry(){
     return vao;
 }
 
-//Font stuff
+//------------------------------------------//
+// Font stuff
+//------------------------------------------//
 #define SLIMGUI_MAX_NUM_CHARS 32
 
 struct Glyph {

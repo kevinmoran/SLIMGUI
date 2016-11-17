@@ -55,6 +55,8 @@ int main() {
 		float button_width = window_w -2*(window_padding_x+border_thickness_x);
 		float button_height = (window_h-window_header_height - window_padding_y*(num_buttons+1)-border_thickness_y)/num_buttons;
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		//Window
 		slIMGUI_window("Look! A menu!", &window_x,&window_y,window_w,window_h);
 

@@ -44,7 +44,7 @@ bool init_gl(GLFWwindow* &window, int window_width, const int window_height) {
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(41/255.0f, 128/255.0f, 185/255.0f, 0.0f);
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
