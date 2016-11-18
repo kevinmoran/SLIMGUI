@@ -364,6 +364,7 @@ static void slIMGUI_init_text(){
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
+    check_gl_error();
 	load_texture("font.png", &font_texture);
 	font_shader = load_shader("Textured.vert", "Textured.frag");
 }
