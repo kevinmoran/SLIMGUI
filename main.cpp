@@ -18,6 +18,7 @@ int main() {
 
 	slIMGUI_init();
 	
+	check_gl_error(); //check for errors after setup
 	double curr_time = glfwGetTime(), prev_time, dt;
 	//-------------------------------------------------------------------------------------//
 	//-------------------------------------MAIN LOOP---------------------------------------//

@@ -4,6 +4,9 @@
 #include <cstring> //strcat
 
 #define SHADER_PATH "Shaders/"
+#define VP_ATTRIB_LOC 0
+#define VT_ATTRIB_LOC 1
+#define VN_ATTRIB_LOC 2
 
 struct Shader {
     GLuint id;
@@ -120,6 +123,11 @@ static bool load_shader_program(const char* vert_file, const char* frag_file, GL
     *id = glCreateProgram();
     glAttachShader(*id, vs);
     glAttachShader(*id, fs);
+
+    glBindAttribLocation(*id, VP_ATTRIB_LOC, "vp");
+    glBindAttribLocation(*id, VT_ATTRIB_LOC, "vt");
+    glBindAttribLocation(*id, VN_ATTRIB_LOC, "vn");
+
     glLinkProgram(*id);
     
     //Check for linking errors
