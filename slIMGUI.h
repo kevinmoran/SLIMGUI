@@ -351,14 +351,14 @@ static Glyph glyphs_Optima[] = {
 static Font font_Optima = {"Optima", 83, 1024, 256, 95, glyphs_Optima};
 
 static void slIMGUI_init_text(){
+	glGenVertexArrays(1, &text_vao);
+	glBindVertexArray(text_vao);
+    
     //Allocate a vbo with space for SLIMGUI_MAX_NUM_CHARS chars of text geometry
     //We'll fill it with data on the fly
 	glGenBuffers(1, &text_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, text_vbo);
 	glBufferData(GL_ARRAY_BUFFER, SLIMGUI_MAX_NUM_CHARS*6*4*sizeof(float), NULL, GL_STATIC_DRAW);
-	
-	glGenVertexArrays(1, &text_vao);
-	glBindVertexArray(text_vao);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (GLvoid*)(2*sizeof(float)));
 	glEnableVertexAttribArray(0);
