@@ -356,7 +356,7 @@ static void slIMGUI_init_text(){
 	glGenBuffers(1, &text_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, text_vbo);
 	glBufferData(GL_ARRAY_BUFFER, SLIMGUI_MAX_NUM_CHARS*6*4*sizeof(float), NULL, GL_STATIC_DRAW);
-	
+
 	glGenVertexArrays(1, &text_vao);
 	glBindVertexArray(text_vao);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
@@ -364,7 +364,6 @@ static void slIMGUI_init_text(){
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
-    check_gl_error();
 	load_texture("font.png", &font_texture);
 	font_shader = load_shader("Textured.vert", "Textured.frag");
 }
