@@ -111,21 +111,16 @@ bool init_gl(GLFWwindow* &window, int window_width, const int window_height) {
 }
 
 static int checkOglError(const char *file, int line){
-    GLenum glErr;
-    int retCode = 0;
-
-    glErr = glGetError();
-    if (glErr != GL_NO_ERROR)
-    {
+    GLenum glErr = glGetError();
+    if (glErr != GL_NO_ERROR) {
         printf("glError in file %s @ line %d:\n%d - ", file, line, glErr);
 		switch(glErr) {
-			case GL_INVALID_OPERATION:				printf("INVALID_OPERATION\n");				break;
-			case GL_INVALID_ENUM:					printf("INVALID_ENUM\n");					break;
-			case GL_INVALID_VALUE:					printf("INVALID_VALUE\n");      			break;
-			case GL_OUT_OF_MEMORY:					printf("OUT_OF_MEMORY\n");      			break;
-			case GL_INVALID_FRAMEBUFFER_OPERATION:	printf("INVALID_FRAMEBUFFER_OPERATION\n");	break;
+			case GL_INVALID_OPERATION:				printf("INVALID_OPERATION\n");				return 1;
+			case GL_INVALID_ENUM:					printf("INVALID_ENUM\n");					return 1;
+			case GL_INVALID_VALUE:					printf("INVALID_VALUE\n");      			return 1;
+			case GL_OUT_OF_MEMORY:					printf("OUT_OF_MEMORY\n");      			return 1;
+			case GL_INVALID_FRAMEBUFFER_OPERATION:	printf("INVALID_FRAMEBUFFER_OPERATION\n");	return 1;
         }
-        retCode = 1;
     }
-    return retCode;
+    return 0;
 }
